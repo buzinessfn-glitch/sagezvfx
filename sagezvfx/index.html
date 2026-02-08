@@ -29,6 +29,16 @@
             cursor: none; /* Hiding default cursor */
         }
 
+        /* Re-enable cursor for mobile */
+        @media (max-width: 1024px) {
+            * {
+                cursor: auto !important;
+            }
+            #cursor-layer {
+                display: none !important;
+            }
+        }
+
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
@@ -87,6 +97,38 @@
             100% { transform: translate(-50%, 250px) rotate(45deg) scale(0.2); opacity: 0; }
         }
 
+        /* --- BACK TO TOP BUTTON --- */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            z-index: 99;
+            background: var(--bg-panel);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--accent-red);
+            color: white;
+            padding: 12px 25px;
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #backToTop.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #backToTop:hover {
+            background: var(--accent-red);
+            box-shadow: 0 0 20px var(--accent-red);
+        }
+
         /* --- TYPOGRAPHY & UTILS --- */
         h1, h2, h3 { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 2px; }
         a { text-decoration: none; color: white; }
@@ -111,12 +153,10 @@
             z-index: 2;
         }
 
-        /* NEW SAGEZ TITLE STYLING */
         .sagez-title {
             font-family: var(--font-main-title);
             font-size: 10vw;
             line-height: 0.8;
-            /* Silver Chrome to Blood Red Gradient */
             background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 45%, #ff0000 50%, #800000 100%);
             -webkit-background-clip: text;
             background-clip: text;
@@ -241,7 +281,7 @@
             align-items: center;
             gap: 20px;
             padding: 15px 30px;
-            border-radius: 5px; /* Boxier feel */
+            border-radius: 5px;
             border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.02);
             transition: 0.3s;
@@ -329,7 +369,6 @@
             box-shadow: 0 10px 40px rgba(255,0,0,0.4);
         }
 
-        /* --- FOOTER & ATTRIBUTION --- */
         footer {
             text-align: center;
             padding: 80px 50px;
@@ -340,7 +379,6 @@
             font-family: var(--font-main-title);
         }
 
-        /* Power by Sxrch Styling */
         .attribution {
             position: fixed;
             bottom: 20px;
@@ -350,16 +388,13 @@
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 1px;
-            color: #666; /* Grey */
+            color: #666;
             text-transform: uppercase;
             pointer-events: none;
         }
 
-        .attribution span {
-            color: var(--accent-red); /* Red */
-        }
+        .attribution span { color: var(--accent-red); }
 
-        /* --- SCROLL ANIMATION CLASS --- */
         .hidden-el {
             opacity: 0;
             transform: translateY(30px);
@@ -377,6 +412,8 @@
     <div id="cursor-layer">
         <div class="cursor-main" id="cursor"></div>
     </div>
+
+    <button id="backToTop" class="cursor-target">BACK TO TOP</button>
 
     <div class="attribution">
         Power by <span>Sxrch</span>
@@ -411,8 +448,7 @@
 
     <section id="work" class="section-padding">
         <h2 style="text-align: center; margin-bottom: 50px; color: var(--accent-red); font-size: 3rem;">Selected Works</h2>
-        <div class="work-grid" id="work-gallery">
-            </div>
+        <div class="work-grid" id="work-gallery"></div>
     </section>
 
     <section id="clients" class="section-padding" style="background: rgba(255,255,255,0.01);">
@@ -488,38 +524,66 @@
     </footer>
 
     <script>
+        // Check if device is mobile/touch-based
+        const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 1024;
+
         // --- CUSTOM LAVA CURSOR LOGIC ---
         const cursor = document.getElementById('cursor');
         const layer = document.getElementById('cursor-layer');
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        }, { passive: true });
+        if (!isMobile) {
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }, { passive: true });
 
-        function animateCursor() {
-            const speed = 0.3;
-            cursorX += (mouseX - cursorX) * speed;
-            cursorY += (mouseY - cursorY) * speed;
-            cursor.style.transform = `translate3d(${cursorX - 12}px, ${cursorY - 12}px, 0)`;
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
+            function animateCursor() {
+                const speed = 0.3;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.transform = `translate3d(${cursorX - 12}px, ${cursorY - 12}px, 0)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
 
-        function spawnDrop() {
-            const drop = document.createElement('div');
-            drop.classList.add('lava-drop');
-            const size = Math.random() * 12 + 8;
-            drop.style.width = size + 'px';
-            drop.style.height = size + 'px';
-            drop.style.left = cursorX + 'px';
-            drop.style.top = cursorY + 'px';
-            layer.appendChild(drop);
-            setTimeout(() => drop.remove(), 1200);
+            function spawnDrop() {
+                const drop = document.createElement('div');
+                drop.classList.add('lava-drop');
+                const size = Math.random() * 12 + 8;
+                drop.style.width = size + 'px';
+                drop.style.height = size + 'px';
+                drop.style.left = cursorX + 'px';
+                drop.style.top = cursorY + 'px';
+                layer.appendChild(drop);
+                setTimeout(() => drop.remove(), 1200);
+            }
+            setInterval(spawnDrop, 60);
+
+            // Cursor Hover States
+            const addHover = () => cursor.classList.add('cursor-hovered');
+            const removeHover = () => cursor.classList.remove('cursor-hovered');
+
+            document.querySelectorAll('.cursor-target').forEach(el => {
+                el.addEventListener('mouseenter', addHover);
+                el.addEventListener('mouseleave', removeHover);
+            });
         }
-        setInterval(spawnDrop, 60);
+
+        // --- BACK TO TOP LOGIC ---
+        const btnTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 400) {
+                btnTop.classList.add('visible');
+            } else {
+                btnTop.classList.remove('visible');
+            }
+        });
+
+        btnTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
         // --- DYNAMIC WORK IMAGE LOADING ---
         const gallery = document.getElementById('work-gallery');
@@ -533,18 +597,15 @@
                 item.style.display = 'block';
                 item.appendChild(img);
                 gallery.appendChild(item);
-                item.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
-                item.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
+                if (!isMobile) {
+                    item.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
+                    item.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
+                }
             };
             img.onerror = function() { console.log(`${fileName} missing.`); };
         }
 
-        const targets = document.querySelectorAll('.cursor-target');
-        targets.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
-        });
-
+        // --- SCROLL ANIMATION OBSERVER ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('show-el');
