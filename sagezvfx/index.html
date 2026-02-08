@@ -6,7 +6,7 @@
     <title>SAGEZ | Visuals</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <style>
         /* --- CORE THEME --- */
         :root {
@@ -17,8 +17,9 @@
             --text-main: #e0e0e0;
             --glass-border: rgba(255, 50, 50, 0.15);
             --glass-shine: rgba(255, 255, 255, 0.05);
-            --font-head: 'Syncopate', sans-serif;
-            --font-body: 'Rajdhani', sans-serif;
+            --font-main-title: 'Orbitron', sans-serif; /* Aggressive Brand Font */
+            --font-head: 'Bebas Neue', sans-serif;    /* Impactful Headers */
+            --font-body: 'Inter', sans-serif;         /* Modern Body Font */
         }
 
         * {
@@ -36,7 +37,6 @@
             background-image: 
                 radial-gradient(circle at 10% 20%, #1a0000 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, #1a0000 0%, transparent 40%);
-            /* Performance boost */
             backface-visibility: hidden;
         }
 
@@ -50,7 +50,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 9999;
-            filter: blur(4px) contrast(15); /* Slightly reduced blur for performance */
+            filter: blur(4px) contrast(15);
             mix-blend-mode: screen;
             will-change: transform;
         }
@@ -64,7 +64,7 @@
             transform: translate(-50%, -50%);
             transition: width 0.15s, height 0.15s;
             box-shadow: 0 0 15px var(--accent-red);
-            will-change: left, top;
+            will-change: transform;
         }
 
         .cursor-hovered {
@@ -76,7 +76,6 @@
         .lava-drop {
             position: absolute;
             background: var(--accent-red);
-            /* Shape logic: Tear-drop style */
             border-radius: 0 50% 50% 50%;
             transform: translate(-50%, -50%) rotate(45deg); 
             animation: dripFall 1.2s cubic-bezier(0.5, 0, 0.7, 0.5) forwards;
@@ -89,7 +88,7 @@
         }
 
         /* --- TYPOGRAPHY & UTILS --- */
-        h1, h2, h3 { font-family: var(--font-head); text-transform: uppercase; }
+        h1, h2, h3 { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 2px; }
         a { text-decoration: none; color: white; }
         
         .section-padding { padding: 100px 5%; }
@@ -112,16 +111,20 @@
             z-index: 2;
         }
 
+        /* NEW SAGEZ TITLE STYLING */
         .sagez-title {
-            font-size: 8vw;
-            line-height: 0.9;
-            background: linear-gradient(to bottom, #fff, var(--accent-red));
+            font-family: var(--font-main-title);
+            font-size: 10vw;
+            line-height: 0.8;
+            /* Silver Chrome to Blood Red Gradient */
+            background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 45%, #ff0000 50%, #800000 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
-            margin-bottom: 20px;
-            letter-spacing: -5px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.4));
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+            font-weight: 900;
         }
 
         /* --- HERO NAVIGATION GRID --- */
@@ -148,8 +151,8 @@
             position: relative;
             z-index: 2;
             font-family: var(--font-head);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
             color: #fff;
         }
 
@@ -177,19 +180,19 @@
             flex-wrap: wrap;
         }
 
-        .stat-box {
-            text-align: center;
-        }
+        .stat-box { text-align: center; }
         .stat-num {
             display: block;
             font-family: var(--font-head);
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             color: var(--accent-red);
+            line-height: 1;
         }
         .stat-label {
-            font-size: 1rem;
-            letter-spacing: 2px;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
             color: #888;
+            font-weight: 700;
         }
 
         /* --- WORK GALLERY --- */
@@ -208,7 +211,7 @@
             position: relative;
             overflow: hidden;
             transition: 0.4s;
-            display: none; /* Hidden by default, JS will show if image exists */
+            display: none; 
         }
         
         .work-item:hover {
@@ -238,7 +241,7 @@
             align-items: center;
             gap: 20px;
             padding: 15px 30px;
-            border-radius: 50px;
+            border-radius: 5px; /* Boxier feel */
             border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.02);
             transition: 0.3s;
@@ -250,7 +253,7 @@
         }
 
         .client-img {
-            width: 50px; height: 50px; border-radius: 50%;
+            width: 50px; height: 50px; border-radius: 0;
             background: #222; object-fit: cover;
             border: 2px solid var(--accent-red);
         }
@@ -269,15 +272,6 @@
             background: linear-gradient(180deg, rgba(20,20,20,0.8), rgba(0,0,0,0.9));
             border-top: 3px solid var(--accent-red);
             position: relative;
-        }
-        
-        .review-card::after {
-            content: '"';
-            position: absolute;
-            top: 10px; right: 20px;
-            font-size: 4rem;
-            color: rgba(255,0,0,0.1);
-            font-family: serif;
         }
 
         /* --- PRICING --- */
@@ -304,8 +298,8 @@
             border-bottom: 1px solid var(--accent-red);
         }
 
-        .price-title { font-size: 1.5rem; font-weight: 700; }
-        .price-tag { font-family: var(--font-head); color: var(--accent-red); font-size: 1.5rem; }
+        .price-title { font-size: 1.8rem; font-weight: 700; font-family: var(--font-head); }
+        .price-tag { font-family: var(--font-head); color: var(--accent-red); font-size: 1.8rem; }
 
         /* --- CONTACT --- */
         .social-dock {
@@ -322,7 +316,7 @@
             align-items: center;
             background: #111;
             border: 1px solid #333;
-            border-radius: 20px;
+            border-radius: 5px;
             transition: 0.3s;
             font-size: 2rem;
             color: #fff;
@@ -335,25 +329,45 @@
             box-shadow: 0 10px 40px rgba(255,0,0,0.4);
         }
 
-        /* --- FOOTER --- */
+        /* --- FOOTER & ATTRIBUTION --- */
         footer {
             text-align: center;
-            padding: 50px;
-            color: #555;
+            padding: 80px 50px;
+            color: #444;
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            font-family: var(--font-main-title);
+        }
+
+        /* Power by Sxrch Styling */
+        .attribution {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #666; /* Grey */
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .attribution span {
+            color: var(--accent-red); /* Red */
         }
 
         /* --- SCROLL ANIMATION CLASS --- */
         .hidden-el {
             opacity: 0;
-            transform: translateY(30px) skewY(2deg);
-            transition: all 0.8s ease;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1);
         }
         .show-el {
             opacity: 1;
-            transform: translateY(0) skewY(0);
+            transform: translateY(0);
         }
 
     </style>
@@ -364,9 +378,13 @@
         <div class="cursor-main" id="cursor"></div>
     </div>
 
+    <div class="attribution">
+        Power by <span>Sxrch</span>
+    </div>
+
     <section id="hero">
         <h1 class="sagez-title">SAGEZ</h1>
-        <p style="letter-spacing: 5px; color: #888;">VISUAL DESIGN SPECIALIST</p>
+        <p style="letter-spacing: 8px; color: #666; font-weight: 700;">VISUAL ARCHITECT & DESIGNER</p>
         
         <div class="nav-grid">
             <a href="#contact-area" class="nav-btn cursor-target"><span>CONTACT</span></a>
@@ -379,26 +397,26 @@
     <section id="experience">
         <div class="stat-box hidden-el">
             <span class="stat-num">2 YRS</span>
-            <span class="stat-label">EXPERIENCE</span>
+            <span class="stat-label">INDUSTRY EXP</span>
         </div>
         <div class="stat-box hidden-el">
             <span class="stat-num">500+</span>
-            <span class="stat-label">THUMBNAILS</span>
+            <span class="stat-label">ASSETS CREATED</span>
         </div>
         <div class="stat-box hidden-el">
             <span class="stat-num">15K</span>
-            <span class="stat-label">VIEWS GEN</span>
+            <span class="stat-label">AUDIENCE REACH</span>
         </div>
     </section>
 
     <section id="work" class="section-padding">
-        <h2 style="text-align: center; margin-bottom: 50px; color: var(--accent-red);">Selected Works</h2>
+        <h2 style="text-align: center; margin-bottom: 50px; color: var(--accent-red); font-size: 3rem;">Selected Works</h2>
         <div class="work-grid" id="work-gallery">
             </div>
     </section>
 
     <section id="clients" class="section-padding" style="background: rgba(255,255,255,0.01);">
-        <h2 style="text-align: center; margin-bottom: 50px;">Trusted By</h2>
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 3rem;">Trusted By</h2>
         <div class="clients-container">
             <div class="client-pill glass-panel cursor-target hidden-el">
                 <img src="flickzypfp.jpg" class="client-img" onerror="this.src='https://via.placeholder.com/50/333/fff?text=F'">
@@ -416,8 +434,8 @@
     </section>
 
     <section id="pricing" class="section-padding">
-        <h2 style="text-align: center; margin-bottom: 20px; color: var(--accent-red);">Pricing</h2>
-        <p style="text-align: center; color: #666; margin-bottom: 60px;">PORTFOLIO BUILDING RATES</p>
+        <h2 style="text-align: center; margin-bottom: 10px; color: var(--accent-red); font-size: 3rem;">Pricing</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 60px; letter-spacing: 2px;">STANDARD RATES</p>
         
         <div class="pricing-table glass-panel" style="padding: 20px 40px;">
             <div class="price-row cursor-target">
@@ -436,25 +454,25 @@
     </section>
 
     <section id="reviews" class="section-padding">
-        <h2 style="text-align: center;">Client Feedback</h2>
+        <h2 style="text-align: center; font-size: 3rem;">Client Feedback</h2>
         <div class="reviews-grid">
             <div class="review-card glass-panel hidden-el">
-                <h4 style="color: var(--accent-red); margin-bottom: 10px;">SIGMA3X</h4>
+                <h4 style="color: var(--accent-red); margin-bottom: 10px; font-size: 1.5rem;">SIGMA3X</h4>
                 <p style="font-style: italic; color: #ccc;">"The thumbnails this editor made for me look clean, eye-catching, and really helped my videos stand out on the channel."</p>
             </div>
             <div class="review-card glass-panel hidden-el">
-                <h4 style="color: var(--accent-red); margin-bottom: 10px;">KIRILLIAN</h4>
+                <h4 style="color: var(--accent-red); margin-bottom: 10px; font-size: 1.5rem;">KIRILLIAN</h4>
                 <p style="font-style: italic; color: #ccc;">"I’m genuinely impressed with how well the editor captured my style and turned it into thumbnails that get people clicking."</p>
             </div>
             <div class="review-card glass-panel hidden-el">
-                <h4 style="color: var(--accent-red); margin-bottom: 10px;">FLICKZY</h4>
+                <h4 style="color: var(--accent-red); margin-bottom: 10px; font-size: 1.5rem;">FLICKZY</h4>
                 <p style="font-style: italic; color: #ccc;">"Working with this editor was easy and the thumbnails came out sharp, creative, and exactly what I needed."</p>
             </div>
         </div>
     </section>
 
     <section id="contact-area" class="section-padding" style="margin-bottom: 50px;">
-        <h2 style="text-align: center;">READY TO WORK?</h2>
+        <h2 style="text-align: center; font-size: 3rem;">READY TO WORK?</h2>
         <div class="social-dock">
             <a href="https://discord.com/users/1428888756219285657" target="_blank" class="social-icon cursor-target">
                 <svg width="35" height="35" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 13.56 13.56 0 0 0-1.04 2.135 18.258 18.258 0 0 0-5.711 0 13.55 13.55 0 0 0-1.041-2.135.077.077 0 0 0-.078-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
@@ -466,7 +484,7 @@
     </section>
 
     <footer>
-        &copy; 2026 SAGEZ. DESIGNED TO KILL.
+        &copy; 2026 SAGEZ. OVERKILL VISUALS.
     </footer>
 
     <script>
@@ -476,96 +494,63 @@
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
 
-        // Optimization: Use passive listener
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
         }, { passive: true });
 
-        // High-frequency smooth follow
         function animateCursor() {
-            // Increased speed from 0.15 to 0.3 for snappier feel
             const speed = 0.3;
             cursorX += (mouseX - cursorX) * speed;
             cursorY += (mouseY - cursorY) * speed;
-
-            // Using translate3d for hardware acceleration (less lag)
             cursor.style.transform = `translate3d(${cursorX - 12}px, ${cursorY - 12}px, 0)`;
-
             requestAnimationFrame(animateCursor);
         }
         animateCursor();
 
-        // Drip logic (More frequent + Shape)
         function spawnDrop() {
-            // Increased spawn rate (removed the 40% chance restriction)
             const drop = document.createElement('div');
             drop.classList.add('lava-drop');
-            
-            // Random size variation
             const size = Math.random() * 12 + 8;
             drop.style.width = size + 'px';
             drop.style.height = size + 'px';
-
-            // Start position
             drop.style.left = cursorX + 'px';
             drop.style.top = cursorY + 'px';
-
             layer.appendChild(drop);
-
-            // Cleanup
             setTimeout(() => drop.remove(), 1200);
         }
-
-        // Run dripping faster (Every 60ms instead of 100ms)
         setInterval(spawnDrop, 60);
 
         // --- DYNAMIC WORK IMAGE LOADING ---
         const gallery = document.getElementById('work-gallery');
-        
         for (let i = 1; i <= 10; i++) {
             const fileName = `sagezwork${i}.jpg`;
             const item = document.createElement('div');
             item.className = 'work-item cursor-target';
-            
             const img = new Image();
             img.src = fileName;
-            
             img.onload = function() {
-                // Only show and append if image actually loads
                 item.style.display = 'block';
                 item.appendChild(img);
                 gallery.appendChild(item);
-                
-                // Re-bind hover logic for new elements
                 item.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
                 item.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
             };
-            
-            img.onerror = function() {
-                // Image not found - do nothing (it stays display:none and un-appended)
-                console.log(`${fileName} not found, skipping.`);
-            };
+            img.onerror = function() { console.log(`${fileName} missing.`); };
         }
 
-        // Hover Effects for static elements
         const targets = document.querySelectorAll('.cursor-target');
         targets.forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
         });
 
-        // --- SCROLL ANIMATION (OBSERVER) ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show-el');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('show-el');
             });
         }, { threshold: 0.1 });
-
         document.querySelectorAll('.hidden-el').forEach((el) => observer.observe(el));
-
     </script>
 </body>
 </html>
