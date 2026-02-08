@@ -36,6 +36,8 @@
             background-image: 
                 radial-gradient(circle at 10% 20%, #1a0000 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, #1a0000 0%, transparent 40%);
+            /* Performance boost */
+            backface-visibility: hidden;
         }
 
         html {
@@ -48,40 +50,42 @@
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 9999;
-            /* The Gooey Effect: Blur + High Contrast */
-            filter: blur(8px) contrast(20);
+            filter: blur(4px) contrast(15); /* Slightly reduced blur for performance */
             mix-blend-mode: screen;
+            will-change: transform;
         }
 
         .cursor-main {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
             background: var(--accent-red);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
-            box-shadow: 0 0 20px var(--accent-red);
+            transition: width 0.15s, height 0.15s;
+            box-shadow: 0 0 15px var(--accent-red);
+            will-change: left, top;
         }
 
         .cursor-hovered {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: #ff4d4d;
         }
 
         .lava-drop {
             position: absolute;
             background: var(--accent-red);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: dripFall 1.5s linear forwards;
+            /* Shape logic: Tear-drop style */
+            border-radius: 0 50% 50% 50%;
+            transform: translate(-50%, -50%) rotate(45deg); 
+            animation: dripFall 1.2s cubic-bezier(0.5, 0, 0.7, 0.5) forwards;
+            will-change: transform, opacity;
         }
 
         @keyframes dripFall {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            80% { transform: translate(-50%, 150px) scale(0.5); opacity: 0.8; }
-            100% { transform: translate(-50%, 200px) scale(0); opacity: 0; }
+            0% { transform: translate(-50%, -50%) rotate(45deg) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, 250px) rotate(45deg) scale(0.2); opacity: 0; }
         }
 
         /* --- TYPOGRAPHY & UTILS --- */
@@ -188,7 +192,7 @@
             color: #888;
         }
 
-        /* --- WORK GALLERY (Masonry-ish) --- */
+        /* --- WORK GALLERY --- */
         .work-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -204,6 +208,7 @@
             position: relative;
             overflow: hidden;
             transition: 0.4s;
+            display: none; /* Hidden by default, JS will show if image exists */
         }
         
         .work-item:hover {
@@ -357,7 +362,7 @@
 
     <div id="cursor-layer">
         <div class="cursor-main" id="cursor"></div>
-        </div>
+    </div>
 
     <section id="hero">
         <h1 class="sagez-title">SAGEZ</h1>
@@ -388,14 +393,8 @@
 
     <section id="work" class="section-padding">
         <h2 style="text-align: center; margin-bottom: 50px; color: var(--accent-red);">Selected Works</h2>
-        <div class="work-grid">
-            <div class="work-item cursor-target"><img src="surgework1.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+1'"></div>
-            <div class="work-item cursor-target"><img src="surgework2.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+2'"></div>
-            <div class="work-item cursor-target"><img src="surgework3.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+3'"></div>
-            <div class="work-item cursor-target"><img src="surgework4.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+4'"></div>
-            <div class="work-item cursor-target"><img src="surgework5.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+5'"></div>
-            <div class="work-item cursor-target"><img src="surgework6.jpg" onerror="this.src='https://via.placeholder.com/400x300/220000/ff0000?text=Work+6'"></div>
-        </div>
+        <div class="work-grid" id="work-gallery">
+            </div>
     </section>
 
     <section id="clients" class="section-padding" style="background: rgba(255,255,255,0.01);">
@@ -477,54 +476,79 @@
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
 
+        // Optimization: Use passive listener
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-        });
+        }, { passive: true });
 
-        // Smooth follow loop
+        // High-frequency smooth follow
         function animateCursor() {
-            // Lerp (Linear Interpolation) for smoothness
-            const speed = 0.15;
+            // Increased speed from 0.15 to 0.3 for snappier feel
+            const speed = 0.3;
             cursorX += (mouseX - cursorX) * speed;
             cursorY += (mouseY - cursorY) * speed;
 
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
+            // Using translate3d for hardware acceleration (less lag)
+            cursor.style.transform = `translate3d(${cursorX - 12}px, ${cursorY - 12}px, 0)`;
 
             requestAnimationFrame(animateCursor);
         }
         animateCursor();
 
-        // Drip logic (Melting Effect)
+        // Drip logic (More frequent + Shape)
         function spawnDrop() {
-            // Only drip if moving (optional) or just randomly
-            if (Math.random() > 0.6) return; // 40% chance per tick
-
+            // Increased spawn rate (removed the 40% chance restriction)
             const drop = document.createElement('div');
             drop.classList.add('lava-drop');
             
             // Random size variation
-            const size = Math.random() * 15 + 5;
+            const size = Math.random() * 12 + 8;
             drop.style.width = size + 'px';
             drop.style.height = size + 'px';
 
-            // Position at current cursor (with slight offset)
-            drop.style.left = (cursorX + (Math.random() * 10 - 5)) + 'px';
-            drop.style.top = (cursorY + 10) + 'px'; // Start slightly below
+            // Start position
+            drop.style.left = cursorX + 'px';
+            drop.style.top = cursorY + 'px';
 
             layer.appendChild(drop);
 
-            // Remove after animation completes (1.5s match CSS)
-            setTimeout(() => {
-                drop.remove();
-            }, 1500);
+            // Cleanup
+            setTimeout(() => drop.remove(), 1200);
         }
 
-        // Run dripping slightly slower than framerate
-        setInterval(spawnDrop, 100);
+        // Run dripping faster (Every 60ms instead of 100ms)
+        setInterval(spawnDrop, 60);
 
-        // Hover Effects
+        // --- DYNAMIC WORK IMAGE LOADING ---
+        const gallery = document.getElementById('work-gallery');
+        
+        for (let i = 1; i <= 10; i++) {
+            const fileName = `sagezwork${i}.jpg`;
+            const item = document.createElement('div');
+            item.className = 'work-item cursor-target';
+            
+            const img = new Image();
+            img.src = fileName;
+            
+            img.onload = function() {
+                // Only show and append if image actually loads
+                item.style.display = 'block';
+                item.appendChild(img);
+                gallery.appendChild(item);
+                
+                // Re-bind hover logic for new elements
+                item.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
+                item.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hovered'));
+            };
+            
+            img.onerror = function() {
+                // Image not found - do nothing (it stays display:none and un-appended)
+                console.log(`${fileName} not found, skipping.`);
+            };
+        }
+
+        // Hover Effects for static elements
         const targets = document.querySelectorAll('.cursor-target');
         targets.forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hovered'));
@@ -538,10 +562,9 @@
                     entry.target.classList.add('show-el');
                 }
             });
-        });
+        }, { threshold: 0.1 });
 
-        const hiddenElements = document.querySelectorAll('.hidden-el');
-        hiddenElements.forEach((el) => observer.observe(el));
+        document.querySelectorAll('.hidden-el').forEach((el) => observer.observe(el));
 
     </script>
 </body>
